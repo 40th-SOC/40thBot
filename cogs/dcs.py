@@ -39,7 +39,6 @@ class DCS(commands.Cog, name="dcs"):
             playerCount = getPlayerCount(i)
             currentMission = getCurrentMission(i)
             game = f"{playerCount} players in {currentMission}"
-            print(game)
             await self.bot.change_presence(activity=discord.Game(game))
             await asyncio.sleep(5)
 
