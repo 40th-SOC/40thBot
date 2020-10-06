@@ -1,4 +1,4 @@
-import discord, asyncio, os, platform, sys, json, mysql.connector
+import discord, asyncio, os, platform, sys
 from discord.ext.commands import Bot
 from discord.ext import commands
 if not os.path.isfile("config.py"):
@@ -7,52 +7,40 @@ else:
 	import config
 
 bot = Bot(command_prefix=config.BOT_PREFIX)
-db = mysql.connector.connect(
-    host=config.DB_HOST,
-    user=config.DB_USERNAME,
-    password=config.DB_PASSWORD,
-    database=config.DB_DATABASE,
-    )
 
 # The code in this even is executed when the bot is ready
 @bot.event
 async def on_ready():
-	bot.loop.create_task(status_task())
+	# bot.loop.create_task(status_task())
 	print(f"Logged in as {bot.user.name}")
 	print(f"Discord.py API version: {discord.__version__}")
 	print(f"Python version: {platform.python_version()}")
 	print(f"Running on: {platform.system()} {platform.release()} ({os.name})")
 	print("-------------------")	
 
-def getPlayerCount(instance):
-    mycursor = db.cursor()
-    mycursor.execute("SELECT * from pe_dataraw WHERE pe_dataraw_type = 1 AND pe_dataraw_instance = "+str(instance))
-    myresult = mycursor.fetchone()
-    playerCount = json.loads(myresult[2])["c_players"]
-    playerCount = playerCount - 1
-    return playerCount
-
-def getCurrentMission(instance):
-    mycursor = db.cursor()
-    mycursor.execute("SELECT * from pe_dataraw WHERE pe_dataraw_type = 2 AND pe_dataraw_instance = "+str(instance))
-    myresult = mycursor.fetchone()
-    currentMission = json.loads(myresult[2])["mission"]["name"]
-    return currentMission
-
 # Setup the game status task of the bot 
-async def status_task():
-	server1 = str(getPlayerCount(1)) + " players in 40th Mission Server playing " + str(getCurrentMission(1))
-	server2 = str(getPlayerCount(2)) + " players in 40th Training Server playing " + str(getCurrentMission(2))
-	server3 = str(getPlayerCount(3)) + " players in 40th Dynamic Server playing " + str(getCurrentMission(3))
+# async def status_task():
+#	server1 = str(getPlayerCount(1)) + " players in 40th Mission Server playing " + str(getCurrentMission(1))
+#	server2 = str(getPlayerCount(2)) + " players in 40th Training Server playing " + str(getCurrentMission(2))
+#	server3 = str(getPlayerCount(3)) + " players in 40th Dynamic Server playing " + str(getCurrentMission(3))
+#
+#	while True:
+# 		await bot.change_presence(activity=discord.Game(server1))
+# 		await asyncio.sleep(10)
+# 		await bot.change_presence(activity=discord.Game(server2))
+# 		await asyncio.sleep(10)
+# 		await bot.change_presence(activity=discord.Game(server3))
+# 		await asyncio.sleep(5)
 
-	while True:
- 		await bot.change_presence(activity=discord.Game(server1))
- 		await asyncio.sleep(10)
- 		await bot.change_presence(activity=discord.Game(server2))
- 		await asyncio.sleep(10)
- 		await bot.change_presence(activity=discord.Game(server3))
- 		await asyncio.sleep(5)
+# Code to manually load cogs
+@bot.command()
+async def load(ctx, extension):
+	bot.load_extension(f"cogs.{extension}")
 
+# Code to manually unload cogs
+@bot.command()
+async def unload(ctx, extension):
+	bot.unload_extension(f"cogs.{extension}")
 
 # Removes the default help command of discord.py to be able to create our custom help command.
 bot.remove_command("help")
