@@ -39,7 +39,7 @@ def getCurrentMission(instance):
     currentMission = json.loads(myresult[2])["mission"]["name"]
     return currentMission
 
-# Setup the game status task of the bot
+# Setup the game status task of the bot 
 async def status_task():
 	server1 = str(getPlayerCount(1)) + " players in 40th Mission Server playing " + str(getCurrentMission(1))
 	server2 = str(getPlayerCount(2)) + " players in 40th Training Server playing " + str(getCurrentMission(2))
