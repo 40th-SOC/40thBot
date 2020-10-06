@@ -37,12 +37,18 @@ class DCS(commands.Cog, name="dcs"):
     async def change_status(self):
         for i in range(1, 4):
             playerCount = getPlayerCount(i)
-            currentMission = getCurrentMission(i)
-            game = f"{playerCount} players in {currentMission}"
-            await self.bot.change_presence(activity=discord.Game(game))
+            currentMission = getCurrentMission(i)           
+            if i == 1:
+                game = f"{playerCount} players in 40th Mission Server playing {currentMission}" 
+                await self.bot.change_presence(activity=discord.Game(game))
+            elif i == 2:
+                game = f"{playerCount} players in 40th Training Server playing {currentMission}" 
+                await self.bot.change_presence(activity=discord.Game(game))
+            else:
+                game = f"{playerCount} players in 40th Dynamic Server playing {currentMission}" 
+                await self.bot.change_presence(activity=discord.Game(game))                  
+            
             await asyncio.sleep(5)
-
-
 
 def setup(bot):
     bot.add_cog(DCS(bot))
