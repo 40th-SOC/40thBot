@@ -1,5 +1,5 @@
 import os, sys, discord, mysql.connector, json
-from discord.ext import commands
+from discord.ext import commands, tasks
 if not os.path.isfile("config.py"):
     sys.exit("'config.py' not found! Please add it and try again.")
 else:
@@ -11,6 +11,7 @@ db = mysql.connector.connect(
     password=config.DB_PASSWORD,
     database=config.DB_DATABASE,
     )
+db.autocommit = True
 
 def getPlayerCount(instance):
     mycursor = db.cursor()
@@ -25,98 +26,61 @@ def getCurrentMission(instance):
     mycursor.execute("SELECT * from pe_dataraw WHERE pe_dataraw_type = 2 AND pe_dataraw_instance = "+str(instance))
     myresult = mycursor.fetchone()
     currentMission = json.loads(myresult[2])["mission"]["name"]
-    return currentMission
+    return currentMission 
 
-Bot.change_presence(activity=discord.Game("Test"))
+class DCS(commands.Cog, name="dcs"):
+    def __init__(self, bot):
+        self.bot = bot
+        self.change_status.start()
 
-#class DCS(commands.Cog, name="dcs"):
-#    def __init__(self, bot):
-#        self.bot = bot
-#
-#
-#    async def status_task():
-#	    while True:
-#		    await bot.change_presence(activity=discord.Game("Test"))
-
-#    async def set_presence(self, status, server_key):
-#        await self.bot.wait_until_ready()
-#        server_data = self.key_data[server_key]
-#        game="{} players on {} playing on {}".format(status["players"], server_data["alias"], status["missionName"])
-#        health=self.determine_health(status, server_key)
-#        bot_status=discord.Status.online
-#        if health.status == "Unhealthy":
-#            bot_status=discord.Status.idle
-#            game="Slow updates - " + game
-#        elif health.status == "Offline":
-#            bot_status=discord.Status.dnd
-#            game="{} Server offline".format(server_data["alias"])
-#        await self.bot.change_presence(status=bot_status, game=discord.Game(name=game))
+    @tasks.loop(seconds=10)
+    async def change_status(self):
+        while True:
+            for i in range(1, 4):
+                playerCount = getPlayerCount(i)
+                currentMission = getCurrentMission(i)
+                game = f"{playerCount} players in {currentMission}"
+                await self.bot.change_presence(activity=discord.Game(game))
 
 
+'''
+    async def set_presence(self, status, server_key):
+        await self.bot.wait_until_ready()
+        server_data = self.key_data[server_key]
+        game="{} players on {} playing on {}".format(status["players"], server_data["alias"], status["missionName"])
+        health=self.determine_health(status, server_key)
+        bot_status=discord.Status.online
+        if health.status == "Unhealthy":
+            bot_status=discord.Status.idle
+            game="Slow updates - " + game
+        elif health.status == "Offline":
+            bot_status=discord.Status.dnd
+            game="{} Server offline".format(server_data["alias"])
+        await self.bot.change_presence(status=bot_status, game=discord.Game(name=game))
 
-    #@commands.command(name="dcs")
-    #async def help(self, context):
-    #    # Note that commands made only for the owner of the bot are not listed here.
-    #    embed = discord.Embed(
-    #        title="Bot",
-    #        description="List of commands are:",
-    #        color=0x00FF00
-    #    )
-    #    embed.add_field(
-    #        name="Invite",
-    #        value=f"Usage: {config.BOT_PREFIX}invite",
-    #        inline=False
-    #    )
-    #    embed.add_field(
-    #        name="Server",
-    #        value=f"Usage: {config.BOT_PREFIX}server",
-    #        inline=False
-    #    )
-    #    embed.add_field(
-    #        name="Poll",
-    #        value=f"Usage: {config.BOT_PREFIX}poll <Idea>",
-    #        inline=False
-    #    )
-    #    embed.add_field(
-    #        name="8ball",
-    #        value=f"Usage: {config.BOT_PREFIX}8ball <Question>",
-    #        inline=False)
-    #    embed.add_field(
-    #        name="Bitcoin",
-    #        value=f"Usage: {config.BOT_PREFIX}bitcoin",
-    #        inline=False
-    #    )
-    #    embed.add_field(
-    #        name="Info",
-    #        value=f"Usage: {config.BOT_PREFIX}info",
-    #        inline=False
-    #    )
-    #    embed.add_field(
-    #        name="Kick",
-    #        value=f"Usage: {config.BOT_PREFIX}kick <User> <Reason>",
-    #        inline=False
-    #    )
-    #    embed.add_field(
-    #        name="Ban",
-    #        value=f"Usage: {config.BOT_PREFIX}ban <User> <Reason>",
-    #        inline=False
-    #    )
-    #    embed.add_field(
-    #        name="Warn",
-    #        value=f"Usage: {config.BOT_PREFIX}warn <User> <Reason>",
-    #        inline=False
-    #    )
-    #    embed.add_field(
-    #        name="Purge",
-    #        value=f"Usage: {config.BOT_PREFIX}purge <Number>",
-    #        inline=False
-    #    )
-    #    embed.add_field(
-    #        name="Help",
-    #        value=f"Usage: {config.BOT_PREFIX}help",
-    #        inline=False
-    #    )
-    #    await context.send(embed=embed)
+    async def get_status(self, key):
+        url = self.base_url + key
+        resp = await self.session.get(url)
+        if (resp.status != 200):
+            raise ErrorGettingStatus(resp.status)
+        status = json.loads(await resp.text())
+        #Hoggy Server counts himself among the players.
+        status["players"] = status["players"] - 1
+        status["maxPlayers"] = status["maxPlayers"] - 1
+        return status
+
+    def determine_health(self, status, server_key):
+        last_update = arrow.get(status["updateTime"])
+        return ServerHealth(last_update, server_key)
+
+    def humanize_time(self, updateTime):
+        arrowtime = arrow.get(updateTime)
+        return arrowtime.humanize()
+
+    def get_mission_time(self, status):
+        time_seconds = datetime.timedelta(seconds=status["data"]["uptime"])
+        return str(time_seconds).split(".")[0]
+'''
 
 def setup(bot):
     bot.add_cog(DCS(bot))
