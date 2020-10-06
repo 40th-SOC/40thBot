@@ -1,4 +1,4 @@
-import os, sys, discord, mysql.connector, json
+import os, sys, discord, mysql.connector, json, asyncio
 from discord.ext import commands, tasks
 if not os.path.isfile("config.py"):
     sys.exit("'config.py' not found! Please add it and try again.")
@@ -35,12 +35,14 @@ class DCS(commands.Cog, name="dcs"):
 
     @tasks.loop(seconds=10)
     async def change_status(self):
-        while True:
-            for i in range(1, 4):
-                playerCount = getPlayerCount(i)
-                currentMission = getCurrentMission(i)
-                game = f"{playerCount} players in {currentMission}"
-                await self.bot.change_presence(activity=discord.Game(game))
+        for i in range(1, 4):
+            playerCount = getPlayerCount(i)
+            currentMission = getCurrentMission(i)
+            game = f"{playerCount} players in {currentMission}"
+            print(game)
+            await self.bot.change_presence(activity=discord.Game(game))
+            await asyncio.sleep(5)
+
 
 
 def setup(bot):
