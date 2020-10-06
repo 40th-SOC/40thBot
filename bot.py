@@ -49,11 +49,11 @@ if __name__ == "__main__":
 	for extension in config.STARTUP_COGS:
 		try:
 			bot.load_extension(extension)
-			extension = extension.replace("cogs.", "")
+			# extension = extension.replace("cogs.", "")
 			print(f"Loaded extension '{extension}'")
 		except Exception as e:
 			exception = f"{type(e).__name__}: {e}"
-			extension = extension.replace("cogs.", "")
+			# extension = extension.replace("cogs.", "")
 			print(f"Failed to load extension {extension}\n{exception}")
 
 # The code in this event is executed every time someone sends a message, with or without the prefix
