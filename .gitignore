@@ -143,4 +143,4 @@ cython_debug/
 config.py
 
 # Test code
-mysqlConnector.py
+mysqlConnect.py
