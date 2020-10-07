@@ -35,6 +35,20 @@ def getMissionList():
     myresult = mycursor.fetchall()
     return myresult 
 
+def getAttendance(mission_id):
+    mycursor = db.cursor()
+    mycursor.execute("SELECT pe_LogStats_playerid,pe_LogStats_typeid from pe_logstats WHERE pe_LogStats_masterslot <> -1 AND pe_LogStats_missionhash_id = "+str(mission_id)) 
+    userList = mycursor.fetchall()
+    mycursor.execute("SELECT pe_DataPlayers_id,pe_DataPlayers_lastname from pe_dataplayers") 
+    userID = mycursor.fetchall()
+    mycursor.execute("SELECT pe_DataTypes_id,pe_DataTypes_name from pe_datatypes") 
+    planeID = mycursor.fetchall()
+
+    print(userList[1])
+    print(userID)
+    print(planeID)
+    return userList
+
 #while True:
 #    for i in range(1, 4):
 #        playerCount = getPlayerCount(i)
@@ -42,5 +56,8 @@ def getMissionList():
 #        time.sleep(5)
 #        print(playerCount)
 #        print(currentMission)
-mission_list = getMissionList()
-print(mission_list)
+# mission_list = getMissionList()
+# print(mission_list)
+
+user_list = getAttendance(478)
+print(user_list)

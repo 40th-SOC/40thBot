@@ -34,6 +34,13 @@ def getMissionList():
     missionList = mycursor.fetchall()
     return missionList 
 
+def getAttendance(mission_id):
+    mycursor = db.cursor()
+    mycursor.execute("SELECT pe_LogStats_playerid,pe_LogStats_typeid from pe_logstats WHERE pe_LogStats_masterslot <> -1 AND pe_LogStats_missionhash_id = "+str(mission_id)) 
+    userList = mycursor.fetchall()
+    return userList
+
+
 class DCS(commands.Cog, name="dcs"):
     def __init__(self, bot):
         self.bot = bot
@@ -42,6 +49,7 @@ class DCS(commands.Cog, name="dcs"):
     @tasks.loop(seconds=10)
     async def change_status(self):
         for i in range(1, 4):
+            await asyncio.sleep(5)
             playerCount = getPlayerCount(i)
             currentMission = getCurrentMission(i)           
             if i == 1:
@@ -54,7 +62,7 @@ class DCS(commands.Cog, name="dcs"):
                 game = f"{playerCount} players in 40th Dynamic Server playing {currentMission}" 
                 await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(game))                  
             
-            await asyncio.sleep(5)
+            
 
     @commands.command(name="missionlist")
     async def missionlist(self, context):
@@ -64,7 +72,7 @@ class DCS(commands.Cog, name="dcs"):
         embed.add_field(
             name="Recent Mission List",
             value=getMissionList(),
-            inline=True
+            inline=False
         )
         embed.set_footer(
             text=f"request by {context.message.author}"
