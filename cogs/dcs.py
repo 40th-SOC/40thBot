@@ -28,6 +28,12 @@ def getCurrentMission(instance):
     currentMission = json.loads(myresult[2])["mission"]["name"]
     return currentMission 
 
+def getMissionList():
+    mycursor = db.cursor()
+    mycursor.execute("SELECT pe_DataMissionHashes_id,pe_DataMissionHashes_hash from pe_datamissionhashes ORDER BY pe_DataMissionHashes_id DESC LIMIT 10") 
+    missionList = mycursor.fetchall()
+    return missionList 
+
 class DCS(commands.Cog, name="dcs"):
     def __init__(self, bot):
         self.bot = bot
@@ -40,15 +46,30 @@ class DCS(commands.Cog, name="dcs"):
             currentMission = getCurrentMission(i)           
             if i == 1:
                 game = f"{playerCount} players in 40th Mission Server playing {currentMission}" 
-                await self.bot.change_presence(activity=discord.Game(game))
+                await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(game))
             elif i == 2:
                 game = f"{playerCount} players in 40th Training Server playing {currentMission}" 
-                await self.bot.change_presence(activity=discord.Game(game))
+                await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(game))
             else:
                 game = f"{playerCount} players in 40th Dynamic Server playing {currentMission}" 
-                await self.bot.change_presence(activity=discord.Game(game))                  
+                await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(game))                  
             
             await asyncio.sleep(5)
+
+    @commands.command(name="missionlist")
+    async def missionlist(self, context):
+        embed = discord.Embed(
+            color=0x00FF00
+        )
+        embed.add_field(
+            name="Recent Mission List",
+            value=getMissionList(),
+            inline=True
+        )
+        embed.set_footer(
+            text=f"request by {context.message.author}"
+        )
+        await context.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(DCS(bot))
