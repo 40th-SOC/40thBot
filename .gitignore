@@ -141,3 +141,6 @@ cython_debug/
 
 # Bot Config
 config.py
+
+# Test code
+mysqlConnector.py
