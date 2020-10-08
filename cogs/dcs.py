@@ -14,31 +14,49 @@ db = mysql.connector.connect(
 db.autocommit = True
 
 def getPlayerCount(instance):
-    mycursor = db.cursor()
-    mycursor.execute("SELECT * from pe_dataraw WHERE pe_dataraw_type = 1 AND pe_dataraw_instance = "+str(instance))
-    myresult = mycursor.fetchone()
+    conn = db.cursor()
+    conn.execute("SELECT * from pe_dataraw WHERE pe_dataraw_type = 1 AND pe_dataraw_instance = "+str(instance))
+    myresult = conn.fetchone()
     playerCount = json.loads(myresult[2])["c_players"]
     playerCount = playerCount - 1
     return playerCount
 
 def getCurrentMission(instance):
-    mycursor = db.cursor()
-    mycursor.execute("SELECT * from pe_dataraw WHERE pe_dataraw_type = 2 AND pe_dataraw_instance = "+str(instance))
-    myresult = mycursor.fetchone()
+    conn = db.cursor()
+    conn.execute("SELECT * from pe_dataraw WHERE pe_dataraw_type = 2 AND pe_dataraw_instance = "+str(instance))
+    myresult = conn.fetchone()
     currentMission = json.loads(myresult[2])["mission"]["name"]
     return currentMission 
 
 def getMissionList():
-    mycursor = db.cursor()
-    mycursor.execute("SELECT pe_DataMissionHashes_id,pe_DataMissionHashes_hash from pe_datamissionhashes ORDER BY pe_DataMissionHashes_id DESC LIMIT 10") 
-    missionList = mycursor.fetchall()
+    conn = db.cursor()
+    conn.execute("SELECT pe_DataMissionHashes_id,pe_DataMissionHashes_hash from pe_datamissionhashes ORDER BY pe_DataMissionHashes_id DESC LIMIT 10") 
+    missionList = conn.fetchall()
     return missionList 
 
 def getAttendance(mission_id):
-    mycursor = db.cursor()
-    mycursor.execute("SELECT pe_LogStats_playerid,pe_LogStats_typeid from pe_logstats WHERE pe_LogStats_masterslot <> -1 AND pe_LogStats_missionhash_id = "+str(mission_id)) 
-    userList = mycursor.fetchall()
-    return userList
+    conn = db.cursor()
+    conn.execute("SELECT pe_LogStats_playerid,pe_LogStats_typeid from pe_logstats WHERE pe_LogStats_masterslot <> -1 AND pe_LogStats_missionhash_id = "+str(mission_id)) 
+    userList = conn.fetchall()
+    userDict = dict(userList)
+    userIDlist = {}
+    planeIDlist = {}
+
+    for keys in userDict.keys():
+        conn = db.cursor()
+        conn.execute("SELECT pe_DataPlayers_id,pe_DataPlayers_lastname from pe_dataplayers WHERE pe_DataPlayers_id="+str(keys))
+        userID = conn.fetchall()
+        userIDlist.update(userID)
+
+    for values in userDict.values():
+        conn = db.cursor()
+        conn.execute("SELECT pe_DataTypes_id,pe_DataTypes_name from pe_datatypes WHERE pe_DataTypes_id="+str(values))
+        planeID = conn.fetchall()
+        planeIDlist.update(planeID)
+
+    pilotDict = {userIDlist.get(k, k):v for k, v in userDict.items()}
+    attendance = {k: planeIDlist.get(v, v) for k, v in pilotDict.items()}
+    return attendance
 
 
 class DCS(commands.Cog, name="dcs"):
@@ -64,7 +82,7 @@ class DCS(commands.Cog, name="dcs"):
             
             
 
-    @commands.command(name="missionlist")
+    @commands.command(name="mlist")
     async def missionlist(self, context):
         embed = discord.Embed(
             color=0x00FF00
@@ -72,6 +90,22 @@ class DCS(commands.Cog, name="dcs"):
         embed.add_field(
             name="Recent Mission List",
             value=getMissionList(),
+            inline=False
+        )
+        embed.set_footer(
+            text=f"request by {context.message.author}"
+        )
+        await context.send(embed=embed)
+    
+    @commands.command(name="attendance")
+    async def missionlist(self, context, *args):
+        mission_number = "".join(args)
+        embed = discord.Embed(
+            color=0x00FF00
+        )
+        embed.add_field(
+            name="Mission Attendance",
+            value=getAttendance(mission_number),
             inline=False
         )
         embed.set_footer(
