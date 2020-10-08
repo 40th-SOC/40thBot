@@ -110,7 +110,7 @@ class DCS(commands.Cog, name="dcs"):
         )
         embed.add_field(
             name="Mission Attendance",
-            value=list,
+            value=getAttendance(mission_number),
             inline=False
         )
         embed.set_footer(
