@@ -85,13 +85,14 @@ class DCS(commands.Cog, name="dcs"):
     @commands.command(name="mlist")
     async def mlist(self, context):
         embed = discord.Embed(
+            description=getMissionList(),
             color=0x00FF00
         )
-        embed.add_field(
-            name="Mission List",
-            value=getMissionList(),
-            inline=False
-        )
+#        embed.add_field(
+#            name="Mission List",
+#            value=getMissionList(),
+#            inline=False
+#        )
 
         embed.set_footer(
             text=f"request by {context.message.author}"
