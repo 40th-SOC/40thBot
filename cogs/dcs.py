@@ -30,7 +30,7 @@ def getCurrentMission(instance):
 
 def getMissionList():
     conn = db.cursor()
-    conn.execute("SELECT pe_DataMissionHashes_id,pe_DataMissionHashes_hash from pe_datamissionhashes WHERE pe_DataMissionHashes_instance = 1 ORDER BY pe_DataMissionHashes_id DESC LIMIT 10") 
+    conn.execute("SELECT pe_DataMissionHashes_id,pe_DataMissionHashes_hash from pe_datamissionhashes WHERE pe_DataMissionHashes_instance = 1 ORDER BY pe_DataMissionHashes_id DESC LIMIT 20") 
     missionList = conn.fetchall()
     return missionList 
 
@@ -84,14 +84,17 @@ class DCS(commands.Cog, name="dcs"):
 
     @commands.command(name="mlist")
     async def mlist(self, context):
+        mlist = getMissionList()
+
         embed = discord.Embed(
             color=0x00FF00
         )
-        embed.add_field(
-            name="Recent Mission List",
-            value=getMissionList(),
-            inline=False
-        )
+        for row in mlist:
+            embed.add_field(
+                value=row,
+                inline=False
+            )
+
         embed.set_footer(
             text=f"request by {context.message.author}"
         )
@@ -105,17 +108,19 @@ class DCS(commands.Cog, name="dcs"):
             for key in ulist.keys():
                 f.write("%s,%s\n"%(key,ulist[key]))
         file = discord.File("attendance.csv", filename="attendance.csv")
-        for i in ulist:
-            message = i
+
 
         embed = discord.Embed(
             color=0x00FF00
         )
-        embed.add_field(
-            name="Mission Attendance",
-            value=message,
-            inline=False
-        )
+        for row in ulist:
+            embed.add_field(value=row)
+
+#        embed.add_field(
+#            name="Mission Attendance",
+#            value=ulist,
+#            inline=False
+#        )
         embed.set_footer(
             text=f"request by {context.message.author}"
         )
