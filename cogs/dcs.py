@@ -100,10 +100,11 @@ class DCS(commands.Cog, name="dcs"):
     @commands.command(name="attendance")
     async def attendance(self, context, *args):
         mission_number = "".join(args)
-        # list = getAttendance(mission_number)
-        # with open('attendance.csv', 'w')  as f:
-        #    for key in list.keys():
-        #        f.write("%s,%s\n"%(key,list[key]))
+        list = getAttendance(mission_number)
+        with open('attendance.csv', 'w')  as f:
+            for key in list.keys():
+                f.write("%s,%s\n"%(key,list[key]))
+        file = discord.File("attendance.csv", filename="attendance.csv")
 
         embed = discord.Embed(
             color=0x00FF00
@@ -116,7 +117,7 @@ class DCS(commands.Cog, name="dcs"):
         embed.set_footer(
             text=f"request by {context.message.author}"
         )
-        await context.send(embed=embed)
-# file="attendance.csv"
+        await context.send(file=file, embed=embed)
+
 def setup(bot):
     bot.add_cog(DCS(bot))
