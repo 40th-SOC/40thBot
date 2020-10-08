@@ -100,18 +100,20 @@ class DCS(commands.Cog, name="dcs"):
     @commands.command(name="attendance")
     async def attendance(self, context, *args):
         mission_number = "".join(args)
-        list = getAttendance(mission_number)
+        ulist = getAttendance(mission_number)
         with open('attendance.csv', 'w')  as f:
-            for key in list.keys():
-                f.write("%s,%s\n"%(key,list[key]))
+            for key in ulist.keys():
+                f.write("%s,%s\n"%(key,ulist[key]))
         file = discord.File("attendance.csv", filename="attendance.csv")
+        for i in ulist:
+            message = i
 
         embed = discord.Embed(
             color=0x00FF00
         )
         embed.add_field(
             name="Mission Attendance",
-            value=getAttendance(mission_number),
+            value=message,
             inline=False
         )
         embed.set_footer(
