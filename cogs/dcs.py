@@ -91,8 +91,7 @@ class DCS(commands.Cog, name="dcs"):
         )
         for row in mlist:
             embed.add_field(
-                value=row,
-                inline=False
+                name=row,
             )
 
         embed.set_footer(
@@ -114,7 +113,9 @@ class DCS(commands.Cog, name="dcs"):
             color=0x00FF00
         )
         for row in ulist:
-            embed.add_field(value=row)
+            embed.add_field(
+                name=row,
+            )
 
 #        embed.add_field(
 #            name="Mission Attendance",
