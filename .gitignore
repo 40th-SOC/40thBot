@@ -144,3 +144,5 @@ config.py
 
 # Test code
 mysqlConnect.py
+.DS_Store
+test.py
