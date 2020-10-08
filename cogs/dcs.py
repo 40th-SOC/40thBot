@@ -85,7 +85,8 @@ class DCS(commands.Cog, name="dcs"):
     @commands.command(name="mlist")
     async def mlist(self, context):
         embed = discord.Embed(
-            
+            color=0x00FF00
+        )
         embed.add_field(
             name="Recent Mission List",
             value=getMissionList(),
@@ -115,7 +116,7 @@ class DCS(commands.Cog, name="dcs"):
         embed.set_footer(
             text=f"request by {context.message.author}"
         )
-        await context.send(file=attendance.csv, embed=embed)
+        await context.send(file="attendance.csv", embed=embed)
 
 def setup(bot):
     bot.add_cog(DCS(bot))
