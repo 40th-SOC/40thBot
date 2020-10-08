@@ -89,11 +89,11 @@ class DCS(commands.Cog, name="dcs"):
         embed = discord.Embed(
             color=0x00FF00
         )
-        for row in mlist:
-            embed.add_field(
-                name=row,
-                value=""
-            )
+        embed.add_field(
+            name="Mission List",
+            value=mlist,
+            inline=False
+        )
 
         embed.set_footer(
             text=f"request by {context.message.author}"
@@ -113,17 +113,11 @@ class DCS(commands.Cog, name="dcs"):
         embed = discord.Embed(
             color=0x00FF00
         )
-        for row in ulist:
-            embed.add_field(
-                name=row,
-                value=""
-            )
-
-#        embed.add_field(
-#            name="Mission Attendance",
-#            value=ulist,
-#            inline=False
-#        )
+        embed.add_field(
+            name="Mission Attendance",
+            value=ulist,
+            inline=False
+        )
         embed.set_footer(
             text=f"request by {context.message.author}"
         )
