@@ -92,6 +92,7 @@ class DCS(commands.Cog, name="dcs"):
         for row in mlist:
             embed.add_field(
                 name=row,
+                value=""
             )
 
         embed.set_footer(
@@ -115,6 +116,7 @@ class DCS(commands.Cog, name="dcs"):
         for row in ulist:
             embed.add_field(
                 name=row,
+                value=""
             )
 
 #        embed.add_field(
