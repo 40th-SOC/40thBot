@@ -146,3 +146,4 @@ config.py
 mysqlConnect.py
 .DS_Store
 test.py
+attendance.csv
