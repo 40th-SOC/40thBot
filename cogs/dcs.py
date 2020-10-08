@@ -72,13 +72,13 @@ class DCS(commands.Cog, name="dcs"):
             currentMission = getCurrentMission(i)           
             if i == 1:
                 game = f"{playerCount} players in 40th Mission Server playing {currentMission}" 
-                await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(game))
+                await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(name=game))
             elif i == 2:
                 game = f"{playerCount} players in 40th Training Server playing {currentMission}" 
-                await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(game))
+                await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(name=game))
             else:
                 game = f"{playerCount} players in 40th Dynamic Server playing {currentMission}" 
-                await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(game))                  
+                await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(name=game))                  
             
             
 
