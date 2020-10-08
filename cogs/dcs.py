@@ -84,14 +84,12 @@ class DCS(commands.Cog, name="dcs"):
 
     @commands.command(name="mlist")
     async def mlist(self, context):
-        mlist = getMissionList()
-
         embed = discord.Embed(
             color=0x00FF00
         )
         embed.add_field(
             name="Mission List",
-            value=mlist,
+            value=getMissionList(),
             inline=False
         )
 
