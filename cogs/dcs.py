@@ -1,4 +1,4 @@
-import os, sys, discord, mysql.connector, json, asyncio
+import os, sys, discord, mysql.connector, json, asyncio, csv
 from discord.ext import commands, tasks
 if not os.path.isfile("config.py"):
     sys.exit("'config.py' not found! Please add it and try again.")
@@ -85,8 +85,7 @@ class DCS(commands.Cog, name="dcs"):
     @commands.command(name="mlist")
     async def mlist(self, context):
         embed = discord.Embed(
-            color=0x00FF00
-        )
+            
         embed.add_field(
             name="Recent Mission List",
             value=getMissionList(),
@@ -98,20 +97,25 @@ class DCS(commands.Cog, name="dcs"):
         await context.send(embed=embed)
     
     @commands.command(name="attendance")
-    async def attendance(self, context, *args):
+    async def attendance(self, context, ctx, *args):
         mission_number = "".join(args)
+        list = getAttendance(mission_number)
+        with open('attendance.csv', 'w')  as f:
+            for key in list.keys():
+                f.write("%s,%s\n"%(key,list[key]))
+
         embed = discord.Embed(
             color=0x00FF00
         )
         embed.add_field(
             name="Mission Attendance",
-            value=getAttendance(mission_number),
+            value=list,
             inline=False
         )
         embed.set_footer(
             text=f"request by {context.message.author}"
         )
-        await context.send(embed=embed)
+        await context.send(file=attendance.csv, embed=embed)
 
 def setup(bot):
     bot.add_cog(DCS(bot))
