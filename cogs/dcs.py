@@ -83,7 +83,7 @@ class DCS(commands.Cog, name="dcs"):
             
 
     @commands.command(name="mlist")
-    async def missionlist(self, context):
+    async def mlist(self, context):
         embed = discord.Embed(
             color=0x00FF00
         )
@@ -98,7 +98,7 @@ class DCS(commands.Cog, name="dcs"):
         await context.send(embed=embed)
     
     @commands.command(name="attendance")
-    async def missionlist(self, context, *args):
+    async def attendance(self, context, *args):
         mission_number = "".join(args)
         embed = discord.Embed(
             color=0x00FF00
