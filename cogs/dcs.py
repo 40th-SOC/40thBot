@@ -158,8 +158,8 @@ class DCS(commands.Cog, name="dcs"):
                 color=0x00FF00
                 )
                 embed.add_field(
-                    name="Current Mission / Mission Uptime",
-                    value=str(currentMission)+"\n"+uptime,
+                    name="Current Mission",
+                    value=str(currentMission)+"\n Uptime - "+uptime,
                     inline=False
                 )
                 embed.add_field(
@@ -184,8 +184,8 @@ class DCS(commands.Cog, name="dcs"):
                 color=0x00FF00
                 )
                 embed2.add_field(
-                    name="Current Mission / Mission Uptime",
-                    value=str(currentMission)+"\n"+uptime,
+                    name="Current Mission",
+                    value=str(currentMission)+"\n Uptime - "+uptime,
                     inline=False
                 )
                 embed2.add_field(
@@ -210,8 +210,8 @@ class DCS(commands.Cog, name="dcs"):
                 color=0x00FF00
                 )
                 embed3.add_field(
-                    name="Current Mission / Mission Uptime",
-                    value=str(currentMission)+"\n"+uptime,
+                    name="Current Mission",
+                    value=str(currentMission)+"\n Uptime - "+uptime,
                     inline=False
                 )
                 embed3.add_field(
