@@ -138,11 +138,14 @@ class DCS(commands.Cog, name="dcs"):
 
     @commands.command(name="status")
     async def status(self, context):
-
         for i in range(1, 4):
             pLen = len(getMissionStatus(i)[0])
             currentMission = getServerStatus(i)[1]           
-            if i == 1:   
+            if i == 1:  
+                buffer = ""
+                for p in range(1, pLen):
+                  buffer += getMissionStatus(i)[0][p]["name"] + "\n"  
+                
                 embed = discord.Embed(
                 title="40thsoc.org - Mission Server",
                 color=0x00FF00
@@ -152,12 +155,11 @@ class DCS(commands.Cog, name="dcs"):
                     value=str(currentMission),
                     inline=False
                 )
-                for p in range(1, pLen):
-                    embed.add_field(
-                        name="Connected Pilots",
-                        value=getMissionStatus(i)[0][p]["name"],
-                        inline=False
-                    )
+                embed.add_field(
+                    name="Connected Pilots",
+                    value=buffer if len(buffer) > 0 else 'empty',
+                    inline=False
+                )
                 for x in json.loads(getMissionStatus(i)[1])["clients"]["blue"]:
                     embed.add_field(
                         name="Connected LotATC",
@@ -166,6 +168,10 @@ class DCS(commands.Cog, name="dcs"):
                     )
                         
             elif i == 2:
+                buffer2 = ""
+                for p in range(1, pLen):
+                  buffer2 += getMissionStatus(i)[0][p]["name"] + "\n"  
+
                 embed2 = discord.Embed(
                 title="40thsoc.org - Training Server",
                 color=0x00FF00
@@ -175,12 +181,11 @@ class DCS(commands.Cog, name="dcs"):
                     value=str(currentMission),
                     inline=False
                 )
-                for p in range(1, pLen):
-                    embed2.add_field(
-                        name="Connected Pilots",
-                        value=getMissionStatus(i)[0][p]["name"],
-                        inline=False
-                    )
+                embed2.add_field(
+                    name="Connected Pilots",
+                    value=buffer2 if len(buffer2) > 0 else 'empty',
+                    inline=False
+                )
                 for x in json.loads(getMissionStatus(i)[1])["clients"]["blue"]:
                     embed2.add_field(
                         name="Connected LotATC",
@@ -189,6 +194,10 @@ class DCS(commands.Cog, name="dcs"):
                     )
 
             else:
+                buffer3 = ""
+                for p in range(1, pLen):
+                  buffer3 += getMissionStatus(i)[0][p]["name"] + "\n"  
+
                 embed3 = discord.Embed(
                 title="40thsoc.org - Dynamic Server",
                 color=0x00FF00
@@ -198,12 +207,11 @@ class DCS(commands.Cog, name="dcs"):
                     value=str(currentMission),
                     inline=False
                 )
-                for p in range(1, pLen):
-                    embed3.add_field(
-                        name="Connected Pilots",
-                        value=getMissionStatus(i)[0][p]["name"],
-                        inline=False
-                    )
+                embed3.add_field(
+                    name="Connected Pilots",
+                    value=buffer3 if len(buffer3) > 0 else 'empty',
+                    inline=False
+                )
                 for x in json.loads(getMissionStatus(i)[1])["clients"]["blue"]:
                     embed3.add_field(
                         name="Connected LotATC",
