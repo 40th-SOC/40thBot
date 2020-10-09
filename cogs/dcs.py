@@ -211,9 +211,6 @@ class DCS(commands.Cog, name="dcs"):
                         inline=False
                     )  
 
-        embed.set_footer(
-            text=f"request by {context.message.author}"
-        )
         await context.send(embed=embed)
         await context.send(embed=embed2)
         await context.send(embed=embed3)
