@@ -1,4 +1,4 @@
-import os, sys, discord, mysql.connector, json, asyncio, csv
+import os, sys, discord, mysql.connector, json, asyncio, csv, datetime
 from discord.ext import commands, tasks
 if not os.path.isfile("config.py"):
     sys.exit("'config.py' not found! Please add it and try again.")
@@ -18,16 +18,22 @@ db.autocommit = True
 
 def getServerStatus(instance):
     conn = db.cursor()
-    conn.execute("SELECT * from pe_dataraw WHERE pe_dataraw_type = 1 AND pe_dataraw_instance = "+str(instance))
+    conn.execute("SELECT pe_dataraw_payload from pe_dataraw WHERE pe_dataraw_type = 1 AND pe_dataraw_instance = "+str(instance))
     myresult = conn.fetchone()
-    playerCount = json.loads(myresult[2])["c_players"]
+    playerCount = json.loads(myresult[0])["c_players"]
     playerCount = playerCount - 1
 
-    conn.execute("SELECT * from pe_dataraw WHERE pe_dataraw_type = 2 AND pe_dataraw_instance = "+str(instance))
+    conn.execute("SELECT pe_dataraw_payload from pe_dataraw WHERE pe_dataraw_type = 2 AND pe_dataraw_instance = "+str(instance))
     myresult = conn.fetchone()
-    currentMission = json.loads(myresult[2])["mission"]["name"]
+    currentMission = json.loads(myresult[0])["mission"]["name"]
+    
+    conn.execute("SELECT pe_dataraw_payload from pe_dataraw WHERE pe_dataraw_type = 2 AND pe_dataraw_instance = "+str(instance))
+    myresult = conn.fetchone()
+    missionTime = json.loads(myresult[0])["mission"]["modeltime"]
+    missionTime = str(datetime.timedelta(seconds=int(missionTime)))
+    missionTime = missionTime.split(".",maxsplit=1)[0]
 
-    return playerCount, currentMission
+    return playerCount, currentMission, missionTime
 
 def getMissionList():
     conn = db.cursor()
@@ -140,7 +146,8 @@ class DCS(commands.Cog, name="dcs"):
     async def status(self, context):
         for i in range(1, 4):
             pLen = len(getMissionStatus(i)[0])
-            currentMission = getServerStatus(i)[1]           
+            currentMission = getServerStatus(i)[1]
+            uptime = getServerStatus(i)[2]           
             if i == 1:  
                 buffer = ""
                 for p in range(1, pLen):
@@ -151,8 +158,8 @@ class DCS(commands.Cog, name="dcs"):
                 color=0x00FF00
                 )
                 embed.add_field(
-                    name="Current Mission",
-                    value=str(currentMission),
+                    name="Current Mission / Mission Uptime",
+                    value=str(currentMission)+"\n"+uptime,
                     inline=False
                 )
                 embed.add_field(
@@ -177,8 +184,8 @@ class DCS(commands.Cog, name="dcs"):
                 color=0x00FF00
                 )
                 embed2.add_field(
-                    name="Current Mission",
-                    value=str(currentMission),
+                    name="Current Mission / Mission Uptime",
+                    value=str(currentMission)+"\n"+uptime,
                     inline=False
                 )
                 embed2.add_field(
@@ -203,8 +210,8 @@ class DCS(commands.Cog, name="dcs"):
                 color=0x00FF00
                 )
                 embed3.add_field(
-                    name="Current Mission",
-                    value=str(currentMission),
+                    name="Current Mission / Mission Uptime",
+                    value=str(currentMission)+"\n"+uptime,
                     inline=False
                 )
                 embed3.add_field(
