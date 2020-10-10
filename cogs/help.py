@@ -47,18 +47,18 @@ class Help(commands.Cog, name="help"):
             inline=False
         )
         embed.add_field(
-            name="Kick",
-            value=f"Usage: {config.BOT_PREFIX}kick <User> <Reason>",
+            name="status",
+            value=f"Usage: {config.BOT_PREFIX}status\n Desc: Get DCS Mission, Uptime, Players for servers",
             inline=False
         )
         embed.add_field(
-            name="Ban",
-            value=f"Usage: {config.BOT_PREFIX}ban <User> <Reason>",
+            name="mlist",
+            value=f"Usage: {config.BOT_PREFIX}mlist\n Desc: Get DCS Mission Server last 10 missions",
             inline=False
         )
         embed.add_field(
-            name="Warn",
-            value=f"Usage: {config.BOT_PREFIX}warn <User> <Reason>",
+            name="attendance",
+            value=f"Usage: {config.BOT_PREFIX}attendance <mission ID> \n Desc: Get DCS attendance using ID from mlist",
             inline=False
         )
         embed.add_field(

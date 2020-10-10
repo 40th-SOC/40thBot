@@ -18,16 +18,16 @@ db.autocommit = True
 
 def getServerStatus(instance):
     conn = db.cursor()
-    conn.execute("SELECT pe_dataraw_payload from pe_dataraw WHERE pe_dataraw_type = 1 AND pe_dataraw_instance = "+str(instance))
+    conn.execute("SELECT pe_dataraw_payload from pe_dataraw WHERE pe_dataraw_type = 1 AND pe_dataraw_instance = %s", (instance,))
     myresult = conn.fetchone()
     playerCount = json.loads(myresult[0])["c_players"]
     playerCount = playerCount - 1
 
-    conn.execute("SELECT pe_dataraw_payload from pe_dataraw WHERE pe_dataraw_type = 2 AND pe_dataraw_instance = "+str(instance))
+    conn.execute("SELECT pe_dataraw_payload from pe_dataraw WHERE pe_dataraw_type = 2 AND pe_dataraw_instance = %s", (instance,))
     myresult = conn.fetchone()
     currentMission = json.loads(myresult[0])["mission"]["name"]
     
-    conn.execute("SELECT pe_dataraw_payload from pe_dataraw WHERE pe_dataraw_type = 2 AND pe_dataraw_instance = "+str(instance))
+    conn.execute("SELECT pe_dataraw_payload from pe_dataraw WHERE pe_dataraw_type = 2 AND pe_dataraw_instance = %s", (instance,))
     myresult = conn.fetchone()
     missionTime = json.loads(myresult[0])["mission"]["modeltime"]
     missionTime = str(datetime.timedelta(seconds=int(missionTime)))
@@ -43,7 +43,7 @@ def getMissionList():
 
 def getAttendance(mission_id):
     conn = db.cursor()
-    conn.execute("SELECT pe_LogStats_playerid,pe_LogStats_typeid from pe_logstats WHERE pe_LogStats_masterslot <> -1 AND pe_LogStats_missionhash_id = "+str(mission_id)) 
+    conn.execute("SELECT pe_LogStats_playerid,pe_LogStats_typeid from pe_logstats WHERE pe_LogStats_masterslot <> -1 AND pe_LogStats_missionhash_id = %s", (mission_id,)) 
     userList = conn.fetchall()
     userDict = dict(userList)
     userIDlist = {}
@@ -51,13 +51,13 @@ def getAttendance(mission_id):
 
     for keys in userDict.keys():
         conn = db.cursor()
-        conn.execute("SELECT pe_DataPlayers_id,pe_DataPlayers_lastname from pe_dataplayers WHERE pe_DataPlayers_id="+str(keys))
+        conn.execute("SELECT pe_DataPlayers_id,pe_DataPlayers_lastname from pe_dataplayers WHERE pe_DataPlayers_id = %s", (keys,))
         userID = conn.fetchall()
         userIDlist.update(userID)
 
     for values in userDict.values():
         conn = db.cursor()
-        conn.execute("SELECT pe_DataTypes_id,pe_DataTypes_name from pe_datatypes WHERE pe_DataTypes_id="+str(values))
+        conn.execute("SELECT pe_DataTypes_id,pe_DataTypes_name from pe_datatypes WHERE pe_DataTypes_id = %s", (values,))
         planeID = conn.fetchall()
         planeIDlist.update(planeID)
 
@@ -67,11 +67,11 @@ def getAttendance(mission_id):
 
 def getMissionStatus(instance):
     conn = db.cursor()
-    conn.execute("SELECT pe_dataraw_payload from pe_dataraw WHERE pe_dataraw_type = 2 AND pe_dataraw_instance = "+str(instance))
+    conn.execute("SELECT pe_dataraw_payload from pe_dataraw WHERE pe_dataraw_type = 2 AND pe_dataraw_instance = %s", (instance,))
     myresult = conn.fetchone()
     playerName = json.loads(myresult[0])["players"]
 
-    conn.execute("SELECT pe_dataraw_payload from pe_dataraw WHERE pe_dataraw_type = 101 AND pe_dataraw_instance = "+str(instance))
+    conn.execute("SELECT pe_dataraw_payload from pe_dataraw WHERE pe_dataraw_type = 101 AND pe_dataraw_instance = %s", (instance,))
     myresult = conn.fetchone()
     lotatcName = json.loads(myresult[0])
 
