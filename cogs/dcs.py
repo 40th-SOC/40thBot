@@ -15,14 +15,14 @@ db = mysql.connector.connect(
 
 # to allow lookup values to update when changed in mysql
 db.autocommit = True
+conn = db.cursor()
 
 def getServerStatus(instance):
-    conn = db.cursor()
+
     conn.execute("SELECT pe_dataraw_payload from pe_dataraw WHERE pe_dataraw_type = 1 AND pe_dataraw_instance = %s", (instance,))
     myresult = conn.fetchone()
     playerCount = json.loads(myresult[0])["c_players"]
     playerCount = playerCount - 1
-
     conn.execute("SELECT pe_dataraw_payload from pe_dataraw WHERE pe_dataraw_type = 2 AND pe_dataraw_instance = %s", (instance,))
     myresult = conn.fetchone()
     currentMission = json.loads(myresult[0])["mission"]["name"]
@@ -36,13 +36,11 @@ def getServerStatus(instance):
     return playerCount, currentMission, missionTime
 
 def getMissionList():
-    conn = db.cursor()
     conn.execute("SELECT pe_DataMissionHashes_id,pe_DataMissionHashes_hash from pe_datamissionhashes WHERE pe_DataMissionHashes_instance = 1 ORDER BY pe_DataMissionHashes_id DESC LIMIT 10") 
     missionList = conn.fetchall()
     return missionList 
 
 def getAttendance(mission_id):
-    conn = db.cursor()
     conn.execute("SELECT pe_LogStats_playerid,pe_LogStats_typeid from pe_logstats WHERE pe_LogStats_masterslot <> -1 AND pe_LogStats_missionhash_id = %s", (mission_id,)) 
     userList = conn.fetchall()
     userDict = dict(userList)
@@ -50,13 +48,11 @@ def getAttendance(mission_id):
     planeIDlist = {}
 
     for keys in userDict.keys():
-        conn = db.cursor()
         conn.execute("SELECT pe_DataPlayers_id,pe_DataPlayers_lastname from pe_dataplayers WHERE pe_DataPlayers_id = %s", (keys,))
         userID = conn.fetchall()
         userIDlist.update(userID)
 
     for values in userDict.values():
-        conn = db.cursor()
         conn.execute("SELECT pe_DataTypes_id,pe_DataTypes_name from pe_datatypes WHERE pe_DataTypes_id = %s", (values,))
         planeID = conn.fetchall()
         planeIDlist.update(planeID)
@@ -66,7 +62,6 @@ def getAttendance(mission_id):
     return attendance
 
 def getMissionStatus(instance):
-    conn = db.cursor()
     conn.execute("SELECT pe_dataraw_payload from pe_dataraw WHERE pe_dataraw_type = 2 AND pe_dataraw_instance = %s", (instance,))
     myresult = conn.fetchone()
     playerName = json.loads(myresult[0])["players"]
