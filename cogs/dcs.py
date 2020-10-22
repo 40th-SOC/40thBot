@@ -13,9 +13,8 @@ db = mysql.connector.connect(
     database=config.DB_DATABASE,
     )
 
-# to allow lookup values to update when changed in mysql
-db.autocommit = True
 conn = db.cursor()
+db.autocommit = True
 
 def getServerStatus(instance):
 
