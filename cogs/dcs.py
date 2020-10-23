@@ -52,7 +52,7 @@ def getMissionList():
 def getAttendance(mission_id):
     conn.execute("SELECT pe_LogStats_playerid,pe_LogStats_typeid from pe_logstats WHERE pe_LogStats_masterslot <> -1 AND pe_LogStats_missionhash_id = %s", (mission_id,)) 
     userList = conn.fetchall()
-    conn.execute("SELECT pe_DataMissionHashes_hash from pre_datamissionhashes WHERE pe_LogStats_missionhash_id = %s", (mission_id,)) 
+    conn.execute("SELECT pe_DataMissionHashes_hash from pe_datamissionhashes WHERE pe_DataMissionHashes_id = %s", (mission_id,)) 
     mission = conn.fetchall()
     userDict = dict(userList)
     userIDlist = {}
