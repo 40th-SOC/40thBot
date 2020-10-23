@@ -35,13 +35,25 @@ def getServerStatus(instance):
     return playerCount, currentMission, missionTime
 
 def getMissionList():
-    conn.execute("SELECT pe_DataMissionHashes_id,pe_DataMissionHashes_hash from pe_datamissionhashes WHERE pe_DataMissionHashes_instance = 1 ORDER BY pe_DataMissionHashes_id DESC LIMIT 10") 
-    missionList = conn.fetchall()
-    return missionList 
+    conn.execute("SELECT pe_DataMissionHashes_id,pe_DataMissionHashes_hash from pe_datamissionhashes WHERE pe_DataMissionHashes_instance = 1 ORDER BY pe_DataMissionHashes_id DESC LIMIT 75") 
+    result = conn.fetchall()
+    olist = list()
+    for mission in range(0, len(result)):
+        mizid = result[mission][0]
+        conn.execute("SELECT pe_LogStats_missionhash_id from pe_logstats WHERE pe_LogStats_missionhash_id = %s GROUP by pe_LogStats_masterslot HAVING count(*) > 1", (mizid,))
+        r = conn.fetchall()
+        if len(r) > 1:
+            filist = (r[0][0])
+            conn.execute("SELECT pe_DataMissionHashes_id,pe_DataMissionHashes_hash from pe_datamissionhashes WHERE pe_DataMissionHashes_id = %s", (filist,))
+            mlist = conn.fetchall()
+            olist += mlist
+    return olist
 
 def getAttendance(mission_id):
     conn.execute("SELECT pe_LogStats_playerid,pe_LogStats_typeid from pe_logstats WHERE pe_LogStats_masterslot <> -1 AND pe_LogStats_missionhash_id = %s", (mission_id,)) 
     userList = conn.fetchall()
+    conn.execute("SELECT pe_DataMissionHashes_hash from pre_datamissionhashes WHERE pe_LogStats_missionhash_id = %s", (mission_id,)) 
+    mission = conn.fetchall()
     userDict = dict(userList)
     userIDlist = {}
     planeIDlist = {}
@@ -58,7 +70,7 @@ def getAttendance(mission_id):
 
     pilotDict = {userIDlist.get(k, k):v for k, v in userDict.items()}
     attendance = {k: planeIDlist.get(v, v) for k, v in pilotDict.items()}
-    return attendance
+    return attendance, mission
 
 def getMissionStatus(instance):
     conn.execute("SELECT pe_dataraw_payload from pe_dataraw WHERE pe_dataraw_type = 2 AND pe_dataraw_instance = %s", (instance,))
@@ -116,7 +128,8 @@ class DCS(commands.Cog, name="dcs"):
     @commands.command(name="attendance")
     async def attendance(self, context, *args):
         mission_number = "".join(args)
-        ulist = getAttendance(mission_number)
+        ulist = getAttendance(mission_number)[0]
+        mission = str(getAttendance(mission_number)[1])
         fulist = '\n'.join(f"{line[0]}, '{line[1]}'" for line in ulist.items())
         with open('attendance.csv', 'w')  as f:
             for key in ulist.keys():
@@ -127,7 +140,7 @@ class DCS(commands.Cog, name="dcs"):
             color=0x00FF00
         )
         embed.add_field(
-            name="Mission Attendance",
+            name="Mission Attendance\n"+ mission,
             value=fulist,
             inline=False
         )
