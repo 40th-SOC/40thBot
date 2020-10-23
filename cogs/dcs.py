@@ -46,6 +46,13 @@ def getMissionList():
             filist = (r[0][0])
             conn.execute("SELECT pe_DataMissionHashes_id,pe_DataMissionHashes_hash from pe_datamissionhashes WHERE pe_DataMissionHashes_id = %s", (filist,))
             mlist = conn.fetchall()
+            mlist = mlist[0]
+            sname = str(mlist[1])
+            sname = sname.split("@")
+            sname = f"{sname[0]} - {sname[3]}"
+            molist = list(mlist)
+            molist[1] = sname
+            mlist = tuple(molist)
             olist += mlist
     return olist
 
