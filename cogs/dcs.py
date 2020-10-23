@@ -77,7 +77,7 @@ def getAttendance(mission_id):
 
     pilotDict = {userIDlist.get(k, k):v for k, v in userDict.items()}
     attendance = {k: planeIDlist.get(v, v) for k, v in pilotDict.items()}
-    
+
     return attendance, mission
 
 def getMissionStatus(instance):
@@ -124,7 +124,7 @@ class DCS(commands.Cog, name="dcs"):
         )
         embed.add_field(
             name="Mission List",
-            value=fmlist,
+            value=f"{fmlist}",
             inline=False
         )
 
@@ -150,8 +150,8 @@ class DCS(commands.Cog, name="dcs"):
             color=0x00FF00
         )
         embed.add_field(
-            name=f"Mission Attendance for:\n*****\n{mission[0]} - {mission[3]}\n*****",
-            value=fulist,
+            name=f'Mission Attendance for:\n  {mission[0]} - {mission[3]}',
+            value=f"```fix\n{fulist}\n```",
             inline=False
         )
         embed.set_footer(
