@@ -129,7 +129,9 @@ class DCS(commands.Cog, name="dcs"):
     async def attendance(self, context, *args):
         mission_number = "".join(args)
         ulist = getAttendance(mission_number)[0]
-        mission = str(getAttendance(mission_number)[1])
+        mission = getAttendance(mission_number)[1][0][0]
+        mission = str(mission)
+        mission = mission.split("@")
         fulist = '\n'.join(f"{line[0]}, '{line[1]}'" for line in ulist.items())
         with open('attendance.csv', 'w')  as f:
             for key in ulist.keys():
@@ -140,7 +142,7 @@ class DCS(commands.Cog, name="dcs"):
             color=0x00FF00
         )
         embed.add_field(
-            name="Mission Attendance\n"+ mission,
+            name=f"Mission Attendance for:\n {mission[0]} {mission[3]}",
             value=fulist,
             inline=False
         )
