@@ -37,23 +37,23 @@ def getServerStatus(instance):
 def getMissionList():
     conn.execute("SELECT pe_DataMissionHashes_id,pe_DataMissionHashes_hash from pe_datamissionhashes WHERE pe_DataMissionHashes_instance = 1 ORDER BY pe_DataMissionHashes_id DESC LIMIT 75") 
     result = conn.fetchall()
-    olist = list()
+    olist = []
     for mission in range(0, len(result)):
         mizid = result[mission][0]
         conn.execute("SELECT pe_LogStats_missionhash_id from pe_logstats WHERE pe_LogStats_missionhash_id = %s GROUP by pe_LogStats_masterslot HAVING count(*) > 1", (mizid,))
         r = conn.fetchall()
         if len(r) > 1:
+            # lookup mission if number of players > 1 and return mission
             filist = (r[0][0])
             conn.execute("SELECT pe_DataMissionHashes_id,pe_DataMissionHashes_hash from pe_datamissionhashes WHERE pe_DataMissionHashes_id = %s", (filist,))
             mlist = conn.fetchall()
-            mlist = mlist[0]
-            sname = str(mlist[1])
+            # remove @1 @v0.10.1 etc from mission name
+            sname = str(mlist[0][1])
             sname = sname.split("@")
             sname = f"{sname[0]} - {sname[3]}"
-            molist = list(mlist)
-            molist[1] = sname
-            mlist = tuple(molist)
-            olist += mlist
+            fixlist = mlist[0][0], sname
+            olist.append(fixlist)
+
     return olist
 
 def getAttendance(mission_id):
@@ -77,6 +77,7 @@ def getAttendance(mission_id):
 
     pilotDict = {userIDlist.get(k, k):v for k, v in userDict.items()}
     attendance = {k: planeIDlist.get(v, v) for k, v in pilotDict.items()}
+    
     return attendance, mission
 
 def getMissionStatus(instance):
