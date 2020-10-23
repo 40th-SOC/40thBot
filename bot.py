@@ -63,24 +63,24 @@ async def on_message(message):
 			await context.send(embed=embed)
 
 # The code in this event is executed every time a command has been *successfully* executed
-@bot.event
-async def on_command_completion(ctx):
-	fullCommandName = ctx.command.qualified_name
-	split = fullCommandName.split(" ")
-	executedCommand = str(split[0])
-	print(f"Executed {executedCommand} command in {ctx.guild.name} by {ctx.message.author} (ID: {ctx.message.author.id})")
+#@bot.event
+#async def on_command_completion(ctx):
+#	fullCommandName = ctx.command.qualified_name
+#	split = fullCommandName.split(" ")
+#	executedCommand = str(split[0])
+#	print(f"Executed {executedCommand} command in {ctx.guild.name} by {ctx.message.author} (ID: {ctx.message.author.id})")
 
 # The code in this event is executed every time a valid commands catches an error
-@bot.event
-async def on_command_error(context, error):
-	if isinstance(error, commands.CommandOnCooldown):
-		embed = discord.Embed(
-			title="Error!",
-			description="This command is on a %.2fs cooldown" % error.retry_after,
-			color=0x00FF00
-		)
-		await context.send(embed=embed)
-	raise error
+#@bot.event
+#async def on_command_error(context, error):
+#	if isinstance(error, commands.CommandOnCooldown):
+#		embed = discord.Embed(
+#			title="Error!",
+#			description="This command is on a %.2fs cooldown" % error.retry_after,
+#			color=0x00FF00
+#		)
+#		await context.send(embed=embed)
+#	raise error
 
 # Run the bot with the token
 bot.run(config.TOKEN)
