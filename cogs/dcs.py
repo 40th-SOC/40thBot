@@ -142,7 +142,7 @@ class DCS(commands.Cog, name="dcs"):
             color=0x00FF00
         )
         embed.add_field(
-            name=f"Mission Attendance for:\n {mission[0]} {mission[3]}",
+            name=f"Mission Attendance for:\n {mission[0]} - {mission[3]}",
             value=fulist,
             inline=False
         )
